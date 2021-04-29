@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} Profile {% endblock %}
+{% block body %}
+<h3>Your profile</h3>
+{% if user.user_profile %}
+  <img src="/media/{{ user.user_profile.profile_pic }}" class="rounded-circle" width="80px">
+  <br>
+  <a href="{% url 'Login_API:edit_profile_pic' %}" class="btn btn-info btn-sm">Change profile picture</a>
+  <br>
+{% else %}
+  <img src="/media/default.png" class="rounded-circle" width="80px">
+  <br>
+  <a href="{% url 'Login_API:add_profile_pic' %}" class="btn btn-info btn-sm">Change profile picture</a>
+  <br>
+{% endif %}
+<p>Username: {{ user.username }}</p>
+<p>Email: {{ user.email }}</p>
+<p>First name: {{ user.first_name }}</p>
+<p>Last name: {{ user.last_name }}</p>
+<br>
+<a href="{% url 'Login_API:edit_profile' %}" class="btn btn-warning btn-sm">Edit your profile</a>
+<a href="{% url 'Login_API:edit_password' %}" class="btn btn-warning btn-sm">Change password</a>
+{% endblock %}

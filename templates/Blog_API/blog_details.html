@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} Blog details {% endblock %}
+{% block body %}
+<div class="row">
+  <div class="col-sm-6">
+    <h3>{{ blog.blog_title }}</h3>
+    <h6>Posted by: {{ blog.author }}</h6>
+    <i><h6>Published on {{ blog.publish_date }}</h6></i>
+    <i><h6>Updated on {{ blog.update_date }}</h6></i>
+    {% if blog.liked_blog.count == 1 and blog.blog_comment.count == 1 %}
+    <h6>{{ blog.liked_blog.count }} like | {{ blog.blog_comment.count }} comment</h6>
+    {% endif %}
+    {% if blog.liked_blog.count != 1 and blog.blog_comment.count == 1 %}
+    <h6>{{ blog.liked_blog.count }} likes | {{ blog.blog_comment.count }} comment</h6>
+    {% endif %}
+    {% if blog.liked_blog.count == 1 and blog.blog_comment.count != 1 %}
+    <h6>{{ blog.liked_blog.count }} like | {{ blog.blog_comment.count }} comments</h6>
+    {% endif %}
+    {% if blog.liked_blog.count != 1 and blog.blog_comment.count != 1 %}
+    <h6>{{ blog.liked_blog.count }} likes | {{ blog.blog_comment.count }} comments</h6>
+    {% endif %}
+  </div>
+  <div class="col-sm-6">
+    <img src="/media/{{ blog.blog_image }}" width="100%">
+  </div>
+  {{ blog.blog_content|linebreaks }}
+</div>
+
+<hr>
+{% if not liked %}
+<a href="{% url 'Blog_API:like' pk=blog.pk %}">
+<i class="fa fa-thumbs-o-up fa-2x"></i>
+</a>
+{% else %}
+<a href="{% url 'Blog_API:dislike' pk=blog.pk %}">
+<i class="fa fa-thumbs-o-down fa-2x"></i>
+</a>
+{% endif %}
+<br>
+<div class="row">
+  <div class="col-sm-6">
+    <h5>Comments</h5>
+    {% for comment in blog.blog_comment.all %}
+    <p><a href="#">{{ comment.user }}</a></p>
+    {{ comment.comment }}
+    <h6><i>{{ comment.comment_date }}</i></h6>
+    <br>
+    <hr>
+    {% endfor %}
+  </div>
+  <div class="col-sm-6">
+    <form method="POST">
+      {{ comment_form|crispy }}
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary btn-sm">Comment</button>
+    </form>
+  </div>
+</div>
+<br><br><br>
+
+{% endblock %}

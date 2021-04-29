@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block title %} home {% endblock %}
+{% block body %}
+{% for blog in blogs %}
+<h3>{{ blog.blog_title }}</h3>
+<h6><i>{{ blog.publish_date }}</i></h6>
+
+<div class="row">
+  <div class="col-sm-4">
+    <img src="/media/{{ blog.blog_image }}" alt="{{ blog.blog_title }}" title="{{ blog.blog_title }}" width="100%">
+  </div>
+  <div class="col-sm-8">
+    <p>{{ blog.blog_content|range_filter|linebreaks }}
+      <a href="{% url 'Blog_API:blog_details' slug=blog.slug %}">Read more</a>
+    </p>
+    <h6>Posted by: <a href="#">{{ blog.author }}</a></h6>
+    {% if blog.liked_blog.count == 1 and blog.blog_comment.count == 1 %}
+    <h6>{{ blog.liked_blog.count }} like | {{ blog.blog_comment.count }} comment</h6>
+    {% endif %}
+    {% if blog.liked_blog.count != 1 and blog.blog_comment.count == 1 %}
+    <h6>{{ blog.liked_blog.count }} likes | {{ blog.blog_comment.count }} comment</h6>
+    {% endif %}
+    {% if blog.liked_blog.count == 1 and blog.blog_comment.count != 1 %}
+    <h6>{{ blog.liked_blog.count }} like | {{ blog.blog_comment.count }} comments</h6>
+    {% endif %}
+    {% if blog.liked_blog.count != 1 and blog.blog_comment.count != 1 %}
+    <h6>{{ blog.liked_blog.count }} likes | {{ blog.blog_comment.count }} comments</h6>
+    {% endif %}
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
