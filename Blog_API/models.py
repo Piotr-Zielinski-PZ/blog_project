@@ -27,7 +27,8 @@ class Comment(models.Model):
         ordering = ['-comment_date']
 
     def __str__(self):
-        return self.blog_title
+        return self.user.username
+
 
 class Likes(models.Model):
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='liked_blog')

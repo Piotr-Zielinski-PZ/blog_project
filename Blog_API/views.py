@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 import uuid
 from .forms import CommentForm
+from django.contrib import messages
+from functools import wraps
 
 
 class MyBlogs(LoginRequiredMixin, TemplateView):
@@ -17,7 +19,7 @@ class EditBlog(LoginRequiredMixin, UpdateView):
     template_name = 'Blog_API/edit_blog.html'
 
     def get_success_url(self, **kwargs):
-        return reverse_lazy('Blog_API:blog_details', kwargs={'slug',self.object.slug})
+        return reverse_lazy('Blog_API:blog_details', kwargs={'slug':self.object.slug,})
 
 class BlogList(ListView):
     context_object_name = 'blogs'
@@ -36,6 +38,7 @@ class CreateBlog(LoginRequiredMixin, CreateView):
         blog_object.slug = title.replace(' ','-') + '-' + str(uuid.uuid4())
         blog_object.save()
         return HttpResponseRedirect(reverse('index'))
+
 
 def blog_details(request, slug):
     blog = Blog.objects.get(slug=slug)
@@ -56,6 +59,7 @@ def blog_details(request, slug):
             return HttpResponseRedirect(reverse('Blog_API:blog_details', kwargs={'slug':slug}))
     return render(request, 'Blog_API/blog_details.html', context={'blog':blog, 'comment_form':comment_form, 'liked':liked})
 
+
 @login_required
 def like(request, pk):
     blog = Blog.objects.get(pk=pk)
@@ -73,3 +77,13 @@ def dislike(request, pk):
     already_liked = Likes.objects.filter(blog=blog, user=user)
     already_liked.delete()
     return HttpResponseRedirect(reverse('Blog_API:blog_details', kwargs={'slug':blog.slug}))
+
+
+# def profile_required(view):
+#     @wraps(view)
+#     def inner(request, *args, **kwargs) :
+#         if request.user.is_authenticated():
+#             return HttpResponseRedirect('/')
+#         else:
+#             return HttpResponse('Error Message')
+#     return inner

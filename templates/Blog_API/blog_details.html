@@ -26,7 +26,7 @@
   </div>
   {{ blog.blog_content|linebreaks }}
 </div>
-
+{% if request.user.is_authenticated %}
 <hr>
 {% if not liked %}
 <a href="{% url 'Blog_API:like' pk=blog.pk %}">
@@ -37,7 +37,8 @@
 <i class="fa fa-thumbs-o-down fa-2x"></i>
 </a>
 {% endif %}
-<br>
+{% endif %}
+<br><br>
 <div class="row">
   <div class="col-sm-6">
     <h5>Comments</h5>
@@ -49,6 +50,7 @@
     <hr>
     {% endfor %}
   </div>
+  {% if request.user.is_authenticated %}
   <div class="col-sm-6">
     <form method="POST">
       {{ comment_form|crispy }}
@@ -56,6 +58,12 @@
       <button type="submit" class="btn btn-primary btn-sm">Comment</button>
     </form>
   </div>
+  {% else %}
+    <div class="col sm-6">
+      <b><h3>To comment you have to log in</h3></b>
+    </div>
+  {% endif %}
+
 </div>
 <br><br><br>
 
